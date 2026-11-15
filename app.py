@@ -150,7 +150,7 @@ if st.session_state.step == "input":
     st.markdown("")
     uploaded_file = None
     if method_choice == "Upload File Gambar":
-        uploaded_file = st.file_uploader("Pilih file citra tulisan tangan (Format: JPG, PNG, maks. 1 MB)", type=["jpg", "jpeg", "png"])
+        uploaded_file = st.file_uploader("Pilih file citra tulisan tangan (Format: JPG/JPEG, PNG, maks. 1 MB)", type=["jpg", "jpeg", "png"])
     else:
         uploaded_file = st.camera_input("Ambil foto tulisan tangan langsung dari kamera")
 
