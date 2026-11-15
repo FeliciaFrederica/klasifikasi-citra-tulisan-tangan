@@ -74,6 +74,8 @@ st.markdown("""
         border-radius: 10px;
         margin-bottom: 10px;
     }
+    [data-testid=stFileUploaderDropzoneInstructions] > * { display: none; }
+    [data-testid=stFileUploaderDropzoneInstructions]::after { content: '1MB per file \\2022 JPG, JPEG, PNG'; font-size: 14px; opacity: 0.6; }
     </style>
 """, unsafe_allow_html=True)
 
