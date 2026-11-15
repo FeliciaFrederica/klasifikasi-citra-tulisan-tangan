@@ -150,7 +150,7 @@ if st.session_state.step == "input":
     st.markdown("")
     uploaded_file = None
     if method_choice == "Upload File Gambar":
-        uploaded_file = st.file_uploader("Pilih file citra tulisan tangan (Format: JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
+        uploaded_file = st.file_uploader("Pilih file citra tulisan tangan (Format: JPG/JPEG, PNG, maks. 1 MB)", type=["jpg", "jpeg", "png"])
     else:
         uploaded_file = st.camera_input("Ambil foto tulisan tangan langsung dari kamera")
 
@@ -250,7 +250,7 @@ elif st.session_state.step == "result":
         with col_c3:
             st.markdown(f"**{conf:.1f}%**")
             
-    report_text = f"""=== LAPORAN HASIL KLASIFIKASI SCANAJA ===
+    report_text = f"""- LAPORAN HASIL KLASIFIKASI SCANAJA -
 Waktu Pengujian : {data['time']}
 Prediksi Utama  : {data['top_pred']} ({data['top_conf']:.2f}%)
 
@@ -258,7 +258,7 @@ Top 3 Kandidat Alternatif:
 1. ID: {data['labels'][data['indices'][0]]} - {data['normalized'][0]:.1f}%
 2. ID: {data['labels'][data['indices'][1]]} - {data['normalized'][1]:.1f}%
 3. ID: {data['labels'][data['indices'][2]]} - {data['normalized'][2]:.1f}%
-=========================================
+-
 """
     st.markdown("")
     st.download_button(
