@@ -150,7 +150,7 @@ if st.session_state.step == "input":
     st.markdown("")
     uploaded_file = None
     if method_choice == "Upload File Gambar":
-        uploaded_file = st.file_uploader("Pilih file citra tulisan tangan (Format: JPG/JPEG, PNG, maks. 1 MB)", type=["jpg", "jpeg", "png"])
+        uploaded_file = st.file_uploader("Pilih file citra tulisan tangan (Format: JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
     else:
         uploaded_file = st.camera_input("Ambil foto tulisan tangan langsung dari kamera")
 
@@ -167,14 +167,27 @@ if st.session_state.step == "input":
         if st.button("Jalankan Analisis"):
             with st.spinner('Model sedang menganalisis pola goresan tulisan...'):
                 try:
-                    # Preprocessing sesuai model (Grayscale & 64x256)
-                    img = image.resize((256, 64)).convert('L')
-                    img_array = np.array(img) / 255.0
-                    img_array = np.expand_dims(img_array, axis=-1)
-                    img_array = np.expand_dims(img_array, axis=0)
+                    # Preprocessing sesuai model (Grayscale & tile 64x256)
+                    gray = np.array(image.convert('L'))
+                    tinta = np.where(gray < 200)
+                    if len(tinta[0]) > 0:
+                        gray = gray[tinta[0].min():tinta[0].max() + 1, tinta[1].min():tinta[1].max() + 1]
+                    lebar = max(1, int(gray.shape[1] * 64 / gray.shape[0]))
+                    gray = cv2.resize(gray, (lebar, 64), interpolation=cv2.INTER_AREA)
+                    posisi = list(range(0, max(lebar - 256, 0) + 1, 128))
+                    if lebar > 256 and posisi[-1] != lebar - 256:
+                        posisi.append(lebar - 256)
+                    tiles = []
+                    for x in posisi:
+                        tile = np.full((64, 256), 255, dtype=np.uint8)
+                        potong = gray[:, x:x + 256]
+                        tile[:, :potong.shape[1]] = potong
+                        if (tile < 200).mean() > 0.01 or len(tiles) == 0:
+                            tiles.append(tile)
+                    img_array = np.array(tiles, dtype=np.float32)[..., np.newaxis] / 255.0
                     
                     # Prediksi Model
-                    predictions = model.predict(img_array)[0]
+                    predictions = model.predict(img_array).mean(axis=0)
                     top_3_indices = np.argsort(predictions)[::-1][:3]
                     
                     top_3_raw = predictions[top_3_indices]
