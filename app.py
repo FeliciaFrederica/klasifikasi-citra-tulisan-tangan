@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 from PIL import Image, ImageOps
 import cv2
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 # 1. Konfigurasi Halaman
 st.set_page_config(
@@ -202,7 +202,7 @@ if st.session_state.step == "input":
                     top_prediction = class_labels[top_3_indices[0]]
                     top_confidence = top_3_normalized[0]
                     
-                    timestamp = datetime.now().strftime("%d %b %Y, %H:%M")
+                    timestamp = datetime.now(timezone(timedelta(hours=7))).strftime("%d %b %Y, %H:%M")
                     
                     current_data = {
                         "image": image,
